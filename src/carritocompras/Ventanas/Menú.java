@@ -4,18 +4,26 @@
  */
 package carritocompras.Ventanas;
 import java.sql.Connection;
+import javax.swing.JFrame;
 /**
  *
  * @author Arturo
  */
+
+
 public class Menú extends javax.swing.JFrame {
     private java.sql.Connection conexionActiva;
     private boolean usuario = false;
     private boolean MenuDespegable = false;
-        
-    public Menú(java.sql.Connection conexion, String nUsuario) {
+    private int idUsuario;
+
+    //lista global de menu para guardar productos agregados
+public static java.util.List<String[]> listaCarrito = new java.util.ArrayList<>();    
+    
+    public Menú(java.sql.Connection conexion, String nUsuario, int idUsuario) {
         initComponents();
         this.conexionActiva = conexion;
+        this.idUsuario = idUsuario;
         this.setLocationRelativeTo(null);
         
         PanelBarra.setVisible(false);
@@ -33,6 +41,7 @@ public class Menú extends javax.swing.JFrame {
         }
         
         cargarProductos("Todas");
+        this.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
     
     }
     public void cargarProductos(String categorias){
@@ -58,6 +67,7 @@ public class Menú extends javax.swing.JFrame {
             double precio = rs.getDouble("precio");
             String marca = rs.getString("marca");
             int stock = rs.getInt("stock");
+            int idProd = rs.getInt("id_productos");
             
             //se crean tarjetas visuales para cada producto
             javax.swing.JPanel tarjeta = new javax.swing.JPanel();
@@ -74,6 +84,32 @@ public class Menú extends javax.swing.JFrame {
             javax.swing.JLabel lblStock = new javax.swing.JLabel("Disponibles: " + stock, javax.swing.SwingConstants.CENTER);
             
             javax.swing.JButton btnAgregar = new javax.swing.JButton("Agregar al Carrito");
+            
+        btnAgregar.addActionListener(e -> {
+        // Validar si hay usuario logueado
+        if (!this.usuario) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debes iniciar sesión para agregar productos al carrito.");
+            return;
+        }
+        String sqlInsert = "INSERT INTO carrito (id_usuario, id_producto, cantidad) VALUES (?, ?, 1) " +
+                       "ON CONFLICT (id_usuario, id_producto) " +
+                       "DO UPDATE SET cantidad = carrito.cantidad + 1";
+        try{
+        java.sql.PreparedStatement psCarrito = this.conexionActiva.prepareStatement(sqlInsert);
+        psCarrito.setInt(1, this.idUsuario);
+        psCarrito.setInt(2, idProd);
+        
+        psCarrito.executeUpdate();
+        javax.swing.JOptionPane.showMessageDialog(this, "¡" + nombre + " guardado en tu carrito!");
+        
+        }catch (java.sql.SQLException ex){
+            System.err.println("Error al guardar en carrito: " + ex.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Error al guardar en el carrito.");
+            
+        }
+
+        
+    });
             
             //elementos de las tarjetas
             tarjeta.add(lblNombre);
@@ -113,6 +149,7 @@ public class Menú extends javax.swing.JFrame {
         PanelBarra = new javax.swing.JPanel();
         BVenta = new javax.swing.JButton();
         cbxCategorias = new javax.swing.JComboBox<>();
+        BCarrito = new javax.swing.JButton();
         BHamburguesa = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         pnlProductos = new javax.swing.JPanel();
@@ -133,6 +170,9 @@ public class Menú extends javax.swing.JFrame {
         cbxCategorias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Almacenamiento", "Bocinas", "Fuentes de poder", "Gabinetes", "Gráficas", "Microfonos", "Monitores", "Mouse", "RAM", "Procesadores", "Sillas", "Tarjetas madres", "Teclados", "Ventiladores (Gabinetes)" }));
         cbxCategorias.addActionListener(this::cbxCategoriasActionPerformed);
 
+        BCarrito.setText("Carrito 🛒");
+        BCarrito.addActionListener(this::BCarritoActionPerformed);
+
         javax.swing.GroupLayout PanelBarraLayout = new javax.swing.GroupLayout(PanelBarra);
         PanelBarra.setLayout(PanelBarraLayout);
         PanelBarraLayout.setHorizontalGroup(
@@ -142,9 +182,10 @@ public class Menú extends javax.swing.JFrame {
                 .addGroup(PanelBarraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cbxCategorias, 0, 0, Short.MAX_VALUE)
                     .addGroup(PanelBarraLayout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(BVenta)
-                        .addGap(0, 51, Short.MAX_VALUE)))
+                        .addGroup(PanelBarraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(BCarrito, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BVenta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 80, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         PanelBarraLayout.setVerticalGroup(
@@ -152,7 +193,9 @@ public class Menú extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PanelBarraLayout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(cbxCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 269, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 228, Short.MAX_VALUE)
+                .addComponent(BCarrito)
+                .addGap(18, 18, 18)
                 .addComponent(BVenta)
                 .addGap(73, 73, 73))
         );
@@ -252,12 +295,27 @@ public class Menú extends javax.swing.JFrame {
         cargarProductos(categoriaSeleccionada);
     }//GEN-LAST:event_cbxCategoriasActionPerformed
 
+    private void BCarritoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BCarritoActionPerformed
+        // TODO add your handling code here:
+        if (!this.usuario) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Debes iniciar sesión para ver tu carrito.", 
+            "Sesión requerida", 
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+        VCarrito ventCarrito = new VCarrito(this.conexionActiva, this.idUsuario);
+    ventCarrito.setVisible(true);
+    ventCarrito.setLocationRelativeTo(null);
+    }//GEN-LAST:event_BCarritoActionPerformed
+
     /**
      * @param args the command line arguments
      */
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BCarrito;
     private javax.swing.JButton BHamburguesa;
     private javax.swing.JButton BInicioSesion;
     private javax.swing.JButton BVenta;

@@ -18,6 +18,7 @@ public class VPublicar extends javax.swing.JFrame {
     public VPublicar(java.sql.Connection conexion){
         initComponents();
         this.conexionActiva = conexion;
+        this.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
     }
     /**
      * Creates new form VPublicar

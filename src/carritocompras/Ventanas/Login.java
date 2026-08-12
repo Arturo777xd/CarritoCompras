@@ -20,6 +20,7 @@ public class Login extends javax.swing.JFrame {
     public Login(Connection conexion) {
         initComponents();
         this.conexionActiva = conexion;
+        this.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -109,7 +110,7 @@ public class Login extends javax.swing.JFrame {
             int idUsuarioLogueado = rs.getInt("id_usuario");
             String nombreLogueado = rs.getString("nombre_usuario");
             
-            Menú VentanaMenu = new Menú(this.conexionActiva, usertxt);
+            Menú VentanaMenu = new Menú(this.conexionActiva, nombreLogueado, idUsuarioLogueado);;
             VentanaMenu.setVisible(true);
             VentanaMenu.setLocationRelativeTo(null);
  

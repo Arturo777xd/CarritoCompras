@@ -25,7 +25,7 @@ public class CarritoCompras {
         Connection objConnection =  BS();
         if (objConnection != null){
             System.out.println("Se conectó");
-            Menú VentanaMenu = new Menú(objConnection, null);
+            Menú VentanaMenu = new Menú(objConnection, null, 0);
             VentanaMenu.setVisible(true);
             VentanaMenu.setLocationRelativeTo(null);
         }else{

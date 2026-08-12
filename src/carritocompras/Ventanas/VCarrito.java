@@ -4,12 +4,16 @@
  */
 package carritocompras.Ventanas;
 
+import java.sql.Connection;
+import javax.swing.JFrame;
+
 /**
  *
  * @author Arturo
  */
 public class VCarrito extends javax.swing.JFrame {
-    
+    private java.sql.Connection conexionActiva;
+    private int idUsuario;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VCarrito.class.getName());
 
     /**
@@ -18,6 +22,53 @@ public class VCarrito extends javax.swing.JFrame {
     public VCarrito() {
         initComponents();
     }
+    public VCarrito(java.sql.Connection conexion, int idUsuario) {
+        initComponents();
+        this.conexionActiva = conexion;
+        this.idUsuario = idUsuario;
+        // Carga los productos guardados en menu a la tabla
+        cargarTablaCarrito();
+        this.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
+    }
+    
+    public void cargarTablaCarrito() {
+    // 1. Definir columnas para la tabla
+    String[] columnas = {"Producto", "Precio Unitario", "Cantidad", "Subtotal"};
+    javax.swing.table.DefaultTableModel modelo = new javax.swing.table.DefaultTableModel(columnas, 0);
+
+    double totalGeneral = 0.0;
+
+    // 2. Consulta SQL a PostgreSQL
+    String sql = "SELECT p.nombre, p.precio, c.cantidad " +
+                 "FROM carrito c " +
+                 "JOIN productos p ON c.id_producto = p.id_productos " +
+                 "WHERE c.id_usuario = ?";
+
+    try {
+        java.sql.PreparedStatement ps = this.conexionActiva.prepareStatement(sql);
+        ps.setInt(1, this.idUsuario); // Lee los productos del usuario activo
+        java.sql.ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            String nombre = rs.getString("nombre");
+            double precio = rs.getDouble("precio");
+            int cantidad = rs.getInt("cantidad");
+            double subtotal = precio * cantidad;
+
+            totalGeneral += subtotal;
+
+            // Solo agregamos los datos del producto
+            modelo.addRow(new Object[]{nombre, "$" + precio, cantidad, "$" + subtotal});
+        }
+
+        tblCarrito.setModel(modelo);
+        lblTotal.setText("Total: $" + String.format("%.2f", totalGeneral));
+
+    } catch (java.sql.SQLException e) {
+        System.err.println("Error al cargar carrito: " + e.getMessage());
+    }
+}
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -28,51 +79,52 @@ public class VCarrito extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblCarrito = new javax.swing.JTable();
+        lblTotal = new javax.swing.JLabel();
+        btnFinalizarCompra = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("Mi Carrito");
+        tblCarrito.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tblCarrito);
 
-        jButton1.setText("Pagar");
+        lblTotal.setText("Total: $0.00");
 
-        jLabel2.setText("Total: ");
-
-        jLabel3.setText("Productos");
+        btnFinalizarCompra.setText("Finalizar compra");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(156, 156, 156)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton1)
-                            .addComponent(jLabel1)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(75, 75, 75)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(85, 85, 85)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(146, Short.MAX_VALUE))
+                    .addComponent(btnFinalizarCompra)
+                    .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(98, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addComponent(jLabel1)
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(98, 98, 98))
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblTotal)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnFinalizarCompra)
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         pack();
@@ -81,32 +133,12 @@ public class VCarrito extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new VCarrito().setVisible(true));
-    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JButton btnFinalizarCompra;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblTotal;
+    private javax.swing.JTable tblCarrito;
     // End of variables declaration//GEN-END:variables
 }
