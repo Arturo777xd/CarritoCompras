@@ -31,7 +31,67 @@ public class Menú extends javax.swing.JFrame {
             BInicioSesion.setVisible(true);
             LBienvenida.setVisible(false);
         }
+        
+        cargarProductos("Todas");
     
+    }
+    public void cargarProductos(String categorias){
+        //Limpia tarjetas anteriores
+        pnlProductos.removeAll();
+        
+        String sql;
+        if(categorias.equals("Todas")){
+            sql = "SELECT * FROM productos";
+        }else{
+            sql = "SELECT * FROM productos WHERE carcateristica ILIKE ?"; //ILIKE se usa por si hay problemas con los nombres
+        }
+        try{
+            java.sql.PreparedStatement ps = this.conexionActiva.prepareStatement(sql);
+            if(!categorias.equals("Todas")){
+                ps.setString(1, categorias);
+            }
+            java.sql.ResultSet rs = ps.executeQuery();
+            
+            //revisamos productos en la BS
+            while(rs.next()){
+            String nombre = rs.getString("nombre");
+            double precio = rs.getDouble("precio");
+            String marca = rs.getString("marca");
+            int stock = rs.getInt("stock");
+            
+            //se crean tarjetas visuales para cada producto
+            javax.swing.JPanel tarjeta = new javax.swing.JPanel();
+            tarjeta.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+            tarjeta.setLayout(new java.awt.GridLayout(5, 1)); // 4 líneas verticalmente
+            tarjeta.setPreferredSize(new java.awt.Dimension(180, 165));
+            
+            //componentes de la tarjeta
+            javax.swing.JLabel lblNombre = new javax.swing.JLabel(nombre, javax.swing.SwingConstants.CENTER);
+            lblNombre.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+            
+            javax.swing.JLabel lblMarca = new javax.swing.JLabel("Marca: " + marca, javax.swing.SwingConstants.CENTER);
+            javax.swing.JLabel lblPrecio = new javax.swing.JLabel("$" + precio, javax.swing.SwingConstants.CENTER);
+            javax.swing.JLabel lblStock = new javax.swing.JLabel("Disponibles: " + stock, javax.swing.SwingConstants.CENTER);
+            
+            javax.swing.JButton btnAgregar = new javax.swing.JButton("Agregar al Carrito");
+            
+            //elementos de las tarjetas
+            tarjeta.add(lblNombre);
+            tarjeta.add(lblMarca);
+            tarjeta.add(lblPrecio);
+            tarjeta.add(lblStock);
+            tarjeta.add(btnAgregar);
+            // Metemos la tarjeta al contenedor principal
+            pnlProductos.add(tarjeta);
+            
+            }
+            //Refrescamos la interfaz para pintar los cambios
+            pnlProductos.revalidate();
+            pnlProductos.repaint();
+        }catch (java.sql.SQLException e) {
+        System.err.println("Error al cargar productos: " + e.getMessage());
+    }
+        
     }
 
     /**
@@ -52,7 +112,10 @@ public class Menú extends javax.swing.JFrame {
         LBienvenida = new javax.swing.JLabel();
         PanelBarra = new javax.swing.JPanel();
         BVenta = new javax.swing.JButton();
+        cbxCategorias = new javax.swing.JComboBox<>();
         BHamburguesa = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        pnlProductos = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -67,25 +130,37 @@ public class Menú extends javax.swing.JFrame {
         BVenta.setText("Vender");
         BVenta.addActionListener(this::BVentaActionPerformed);
 
+        cbxCategorias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Almacenamiento", "Bocinas", "Fuentes de poder", "Gabinetes", "Gráficas", "Microfonos", "Monitores", "Mouse", "RAM", "Procesadores", "Sillas", "Tarjetas madres", "Teclados", "Ventiladores (Gabinetes)" }));
+        cbxCategorias.addActionListener(this::cbxCategoriasActionPerformed);
+
         javax.swing.GroupLayout PanelBarraLayout = new javax.swing.GroupLayout(PanelBarra);
         PanelBarra.setLayout(PanelBarraLayout);
         PanelBarraLayout.setHorizontalGroup(
             PanelBarraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PanelBarraLayout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addComponent(BVenta)
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(PanelBarraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cbxCategorias, 0, 0, Short.MAX_VALUE)
+                    .addGroup(PanelBarraLayout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(BVenta)
+                        .addGap(0, 51, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         PanelBarraLayout.setVerticalGroup(
             PanelBarraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PanelBarraLayout.createSequentialGroup()
-                .addContainerGap(282, Short.MAX_VALUE)
+                .addGap(25, 25, 25)
+                .addComponent(cbxCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 269, Short.MAX_VALUE)
                 .addComponent(BVenta)
-                .addGap(107, 107, 107))
+                .addGap(73, 73, 73))
         );
 
         BHamburguesa.setText("☰");
         BHamburguesa.addActionListener(this::BHamburguesaActionPerformed);
+
+        jScrollPane1.setViewportView(pnlProductos);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -93,12 +168,17 @@ public class Menú extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(PanelBarra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BHamburguesa, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 290, Short.MAX_VALUE)
-                .addComponent(BInicioSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
-                .addComponent(LBienvenida, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(BHamburguesa, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(BInicioSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(LBienvenida, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(PanelBarra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 579, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -108,6 +188,8 @@ public class Menú extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BInicioSesion)
                     .addComponent(LBienvenida, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(17, 17, 17)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 380, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(BHamburguesa)
@@ -154,11 +236,21 @@ public class Menú extends javax.swing.JFrame {
             Login ventLogin = new Login (this.conexionActiva);
             ventLogin.setVisible(true);
             ventLogin.setLocationRelativeTo(null);
+            
         }
         
-        
+        cargarProductos("Todas");
         
     }//GEN-LAST:event_BVentaActionPerformed
+
+    private void cbxCategoriasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxCategoriasActionPerformed
+        // TODO add your handling code here:
+        //Obtenemos el nombre de la categoria que seleccione el usuario
+        String categoriaSeleccionada = cbxCategorias.getSelectedItem().toString();
+        
+        //llamamos a cargarProductos para filtrar la categoria
+        cargarProductos(categoriaSeleccionada);
+    }//GEN-LAST:event_cbxCategoriasActionPerformed
 
     /**
      * @param args the command line arguments
@@ -171,5 +263,8 @@ public class Menú extends javax.swing.JFrame {
     private javax.swing.JButton BVenta;
     private javax.swing.JLabel LBienvenida;
     private javax.swing.JPanel PanelBarra;
+    private javax.swing.JComboBox<String> cbxCategorias;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel pnlProductos;
     // End of variables declaration//GEN-END:variables
 }
