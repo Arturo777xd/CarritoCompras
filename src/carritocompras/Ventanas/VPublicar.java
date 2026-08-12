@@ -15,7 +15,6 @@ public class VPublicar extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VPublicar.class.getName());
     private java.sql.Connection conexionActiva;
     
-    
     public VPublicar(java.sql.Connection conexion){
         initComponents();
         this.conexionActiva = conexion;

@@ -152,6 +152,7 @@ public class Menú extends javax.swing.JFrame {
             javax.swing.JOptionPane.showMessageDialog(this, "Debes iniciar sesión para publicar y vender productos.");
             
             Login ventLogin = new Login (this.conexionActiva);
+            ventLogin.setVisible(true);
             ventLogin.setLocationRelativeTo(null);
         }
         
