@@ -4,6 +4,7 @@
  */
 package carritocompras.Ventanas;
 
+import carritocompras.ValidacionLogin;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -115,6 +116,11 @@ public class Login extends javax.swing.JFrame {
         // TODO add your handling code here:
         String usertxt= usuarioTXT.getText();
         String passtxt= contraTXT.getText();
+        String mensajeValidacion = ValidacionLogin.validarCampos(usertxt, passtxt);
+        if (mensajeValidacion != null) {
+            javax.swing.JOptionPane.showMessageDialog(this, mensajeValidacion);
+            return;
+        }
         //consulta a la bd
         String sql = "SELECT * FROM usuarios WHERE nombre_usuario = ? AND contra_usuario = ?";
         try {
