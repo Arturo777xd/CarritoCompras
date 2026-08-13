@@ -17,6 +17,8 @@ public class VMarca extends javax.swing.JFrame {
      */
     public VMarca() {
         initComponents();
+        TemaAplicacion.aplicarVentana(this);
+        setTitle("Carrito Compras - Marcas");
     }
 
     /**

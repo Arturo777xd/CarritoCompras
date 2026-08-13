@@ -22,8 +22,27 @@ public class VentanaRegistro extends javax.swing.JFrame {
      */
     public VentanaRegistro(Connection conexion) {
         initComponents();
+        TemaAplicacion.aplicarVentana(this);
+        configurarCampos();
+        setTitle("Carrito Compras - Crear cuenta");
+        usuariotxt.setToolTipText("Usuario");
+        correotxt.setToolTipText("Correo electrónico");
+        contratxt.setToolTipText("Contraseña");
         this.conexionActiva = conexion;
         this.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
+    }
+
+    private void configurarCampos() {
+        usuariotxt.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                javax.swing.BorderFactory.createLineBorder(TemaAplicacion.BORDE), "Usuario"));
+        correotxt.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                javax.swing.BorderFactory.createLineBorder(TemaAplicacion.BORDE), "Correo electrónico"));
+        contratxt.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                javax.swing.BorderFactory.createLineBorder(TemaAplicacion.BORDE), "Contraseña"));
+        usuariotxt.setPreferredSize(new java.awt.Dimension(usuariotxt.getPreferredSize().width, 42));
+        correotxt.setPreferredSize(new java.awt.Dimension(correotxt.getPreferredSize().width, 42));
+        contratxt.setPreferredSize(new java.awt.Dimension(contratxt.getPreferredSize().width, 42));
+        pack();
     }
 
     /**
@@ -42,7 +61,7 @@ public class VentanaRegistro extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        BCrearCuenta.setText("Iniciar Sesión");
+        BCrearCuenta.setText("Crear Cuenta");
         BCrearCuenta.addActionListener(this::BCrearCuentaActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

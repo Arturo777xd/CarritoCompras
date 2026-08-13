@@ -16,11 +16,32 @@ import java.sql.SQLException;
  */
 public class Login extends javax.swing.JFrame {
     private Connection conexionActiva;
+    private javax.swing.JFrame ventanaAnterior;
     
     public Login(Connection conexion) {
+        this(conexion, null);
+    }
+
+    public Login(Connection conexion, javax.swing.JFrame ventanaAnterior) {
         initComponents();
+        TemaAplicacion.aplicarVentana(this);
+        configurarCampos();
+        setTitle("Carrito Compras - Iniciar sesión");
+        usuarioTXT.setToolTipText("Usuario");
+        contraTXT.setToolTipText("Contraseña");
         this.conexionActiva = conexion;
+        this.ventanaAnterior = ventanaAnterior;
         this.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
+    }
+
+    private void configurarCampos() {
+        usuarioTXT.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                javax.swing.BorderFactory.createLineBorder(TemaAplicacion.BORDE), "Usuario"));
+        contraTXT.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                javax.swing.BorderFactory.createLineBorder(TemaAplicacion.BORDE), "Contraseña"));
+        usuarioTXT.setPreferredSize(new java.awt.Dimension(usuarioTXT.getPreferredSize().width, 42));
+        contraTXT.setPreferredSize(new java.awt.Dimension(contraTXT.getPreferredSize().width, 42));
+        pack();
     }
 
     /**
@@ -114,8 +135,10 @@ public class Login extends javax.swing.JFrame {
             VentanaMenu.setVisible(true);
             VentanaMenu.setLocationRelativeTo(null);
  
-            
-            //cerramos ventana login
+            // Cerramos el login y el menú de invitado, si fue desde ahí.
+            if (this.ventanaAnterior != null) {
+                this.ventanaAnterior.dispose();
+            }
             this.dispose(); 
         } else {
             //error al momento de iniciar sesion

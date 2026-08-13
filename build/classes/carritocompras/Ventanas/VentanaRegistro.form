@@ -64,7 +64,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="BCrearCuenta">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Iniciar Sesi&#xf3;n"/>
+        <Property name="text" type="java.lang.String" value="Crear Cuenta"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BCrearCuentaActionPerformed"/>

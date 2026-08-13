@@ -26,9 +26,9 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="btnFinalizarCompra" min="-2" max="-2" attributes="0"/>
-                  <Component id="lblTotal" min="-2" pref="79" max="-2" attributes="0"/>
                   <Component id="jScrollPane1" min="-2" pref="375" max="-2" attributes="0"/>
+                  <Component id="btnFinalizarCompra" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblTotal" alignment="0" min="-2" pref="207" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="98" max="32767" attributes="0"/>
           </Group>

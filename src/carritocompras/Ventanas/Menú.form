@@ -30,7 +30,7 @@
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="BInicioSesion" min="-2" pref="126" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                      <Component id="LBienvenida" min="-2" pref="104" max="-2" attributes="0"/>
+                      <Component id="LBienvenida" min="-2" pref="230" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="PanelBarra" min="-2" max="-2" attributes="0"/>
@@ -94,7 +94,9 @@
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="BCarrito" max="32767" attributes="0"/>
+                              <Component id="BHistorial" max="32767" attributes="0"/>
                               <Component id="BVenta" max="32767" attributes="0"/>
+                              <Component id="BCerrarSesion" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="80" max="32767" attributes="0"/>
                       </Group>
@@ -111,7 +113,11 @@
                   <EmptySpace pref="228" max="32767" attributes="0"/>
                   <Component id="BCarrito" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="BHistorial" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="BVenta" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="BCerrarSesion" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="73" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -163,6 +169,22 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BCarritoActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="BHistorial">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Historial"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BHistorialActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="BCerrarSesion">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Cerrar sesi&#xf3;n"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BCerrarSesionActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

@@ -17,6 +17,8 @@ public class VistaProducto extends javax.swing.JFrame {
      */
     public VistaProducto() {
         initComponents();
+        TemaAplicacion.aplicarVentana(this);
+        setTitle("Carrito Compras - Producto");
     }
 
     /**

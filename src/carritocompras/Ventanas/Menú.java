@@ -39,8 +39,11 @@ public static java.util.List<String[]> listaCarrito = new java.util.ArrayList<>(
             BInicioSesion.setVisible(true);
             LBienvenida.setVisible(false);
         }
+        BCerrarSesion.setVisible(this.usuario);
         
         cargarProductos("Todas");
+        TemaAplicacion.aplicarVentana(this);
+        setTitle("Carrito Compras");
         this.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
     
     }
@@ -71,7 +74,10 @@ public static java.util.List<String[]> listaCarrito = new java.util.ArrayList<>(
             
             //se crean tarjetas visuales para cada producto
             javax.swing.JPanel tarjeta = new javax.swing.JPanel();
-            tarjeta.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+            tarjeta.setBackground(TemaAplicacion.BLANCO);
+            tarjeta.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+                    javax.swing.BorderFactory.createLineBorder(TemaAplicacion.BORDE),
+                    javax.swing.BorderFactory.createEmptyBorder(6, 6, 6, 6)));
             tarjeta.setLayout(new java.awt.GridLayout(5, 1)); // 4 líneas verticalmente
             tarjeta.setPreferredSize(new java.awt.Dimension(180, 165));
             
@@ -117,6 +123,7 @@ public static java.util.List<String[]> listaCarrito = new java.util.ArrayList<>(
             tarjeta.add(lblPrecio);
             tarjeta.add(lblStock);
             tarjeta.add(btnAgregar);
+            TemaAplicacion.aplicarComponente(tarjeta);
             // Metemos la tarjeta al contenedor principal
             pnlProductos.add(tarjeta);
             
@@ -150,6 +157,8 @@ public static java.util.List<String[]> listaCarrito = new java.util.ArrayList<>(
         BVenta = new javax.swing.JButton();
         cbxCategorias = new javax.swing.JComboBox<>();
         BCarrito = new javax.swing.JButton();
+        BHistorial = new javax.swing.JButton();
+        BCerrarSesion = new javax.swing.JButton();
         BHamburguesa = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         pnlProductos = new javax.swing.JPanel();
@@ -173,6 +182,12 @@ public static java.util.List<String[]> listaCarrito = new java.util.ArrayList<>(
         BCarrito.setText("Carrito 🛒");
         BCarrito.addActionListener(this::BCarritoActionPerformed);
 
+        BHistorial.setText("Historial");
+        BHistorial.addActionListener(this::BHistorialActionPerformed);
+
+        BCerrarSesion.setText("Cerrar sesión");
+        BCerrarSesion.addActionListener(this::BCerrarSesionActionPerformed);
+
         javax.swing.GroupLayout PanelBarraLayout = new javax.swing.GroupLayout(PanelBarra);
         PanelBarra.setLayout(PanelBarraLayout);
         PanelBarraLayout.setHorizontalGroup(
@@ -184,7 +199,9 @@ public static java.util.List<String[]> listaCarrito = new java.util.ArrayList<>(
                     .addGroup(PanelBarraLayout.createSequentialGroup()
                         .addGroup(PanelBarraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(BCarrito, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(BVenta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(BHistorial, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BVenta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BCerrarSesion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 80, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -196,7 +213,11 @@ public static java.util.List<String[]> listaCarrito = new java.util.ArrayList<>(
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 228, Short.MAX_VALUE)
                 .addComponent(BCarrito)
                 .addGap(18, 18, 18)
+                .addComponent(BHistorial)
+                .addGap(18, 18, 18)
                 .addComponent(BVenta)
+                .addGap(18, 18, 18)
+                .addComponent(BCerrarSesion)
                 .addGap(73, 73, 73))
         );
 
@@ -216,7 +237,7 @@ public static java.util.List<String[]> listaCarrito = new java.util.ArrayList<>(
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(BInicioSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(28, 28, 28)
-                        .addComponent(LBienvenida, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(LBienvenida, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(PanelBarra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(29, 29, 29)
@@ -246,7 +267,7 @@ public static java.util.List<String[]> listaCarrito = new java.util.ArrayList<>(
     private void BInicioSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BInicioSesionActionPerformed
         // TODO add your handling code here:
         //Instancia de ventana login con conexion
-        Login VLogin = new Login(this.conexionActiva);
+        Login VLogin = new Login(this.conexionActiva, this);
         //Abrimos ventana
         VLogin.setVisible(true);
         //codigo para centrar ventana en medio
@@ -265,12 +286,16 @@ public static java.util.List<String[]> listaCarrito = new java.util.ArrayList<>(
             PanelBarra.setVisible(true);
             MenuDespegable = true;
         }
+        // Al mostrar la barra, la ventana se ajusta para desplazar el contenido
+        // y conservar visible el catálogo completo.
+        pack();
+        setLocationRelativeTo(null);
     }//GEN-LAST:event_BHamburguesaActionPerformed
 
     private void BVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BVentaActionPerformed
         // TODO add your handling code here:
         if (this.usuario){
-            VPublicar ventanap = new VPublicar(this.conexionActiva);
+            VPublicar ventanap = new VPublicar(this.conexionActiva, this.idUsuario);
                 ventanap.setVisible(true);
                 ventanap.setLocationRelativeTo(null); 
         }else{
@@ -309,6 +334,30 @@ public static java.util.List<String[]> listaCarrito = new java.util.ArrayList<>(
     ventCarrito.setLocationRelativeTo(null);
     }//GEN-LAST:event_BCarritoActionPerformed
 
+    private void BHistorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BHistorialActionPerformed
+        if (!this.usuario) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Debes iniciar sesión para consultar tu historial.",
+                    "Sesión requerida", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        VCompras historial = new VCompras(this.conexionActiva, this.idUsuario);
+        historial.setVisible(true);
+        historial.setLocationRelativeTo(null);
+    }//GEN-LAST:event_BHistorialActionPerformed
+
+    private void BCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BCerrarSesionActionPerformed
+        int confirmar = javax.swing.JOptionPane.showConfirmDialog(this,
+                "¿Deseas cerrar la sesión actual?", "Cerrar sesión",
+                javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.QUESTION_MESSAGE);
+        if (confirmar == javax.swing.JOptionPane.YES_OPTION) {
+            Menú menuInvitado = new Menú(this.conexionActiva, null, 0);
+            menuInvitado.setVisible(true);
+            menuInvitado.setLocationRelativeTo(null);
+            this.dispose();
+        }
+    }//GEN-LAST:event_BCerrarSesionActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -316,6 +365,8 @@ public static java.util.List<String[]> listaCarrito = new java.util.ArrayList<>(
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BCarrito;
+    private javax.swing.JButton BCerrarSesion;
+    private javax.swing.JButton BHistorial;
     private javax.swing.JButton BHamburguesa;
     private javax.swing.JButton BInicioSesion;
     private javax.swing.JButton BVenta;

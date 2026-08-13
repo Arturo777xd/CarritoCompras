@@ -14,17 +14,26 @@ public class VPublicar extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VPublicar.class.getName());
     private java.sql.Connection conexionActiva;
+    private int idUsuarioVendedor;
     
     public VPublicar(java.sql.Connection conexion){
         initComponents();
+        TemaAplicacion.aplicarVentana(this);
+        setTitle("Carrito Compras - Publicar producto");
         this.conexionActiva = conexion;
         this.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
+    }
+    public VPublicar(java.sql.Connection conexion, int idUsuarioVendedor){
+        this(conexion);
+        this.idUsuarioVendedor = idUsuarioVendedor;
     }
     /**
      * Creates new form VPublicar
      */
     public VPublicar() {
         initComponents();
+        TemaAplicacion.aplicarVentana(this);
+        setTitle("Carrito Compras - Publicar producto");
     }
 
     /**
@@ -64,7 +73,6 @@ public class VPublicar extends javax.swing.JFrame {
         BPublicar.addActionListener(this::BPublicarActionPerformed);
 
         cboxcategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Procesadores", "Fuentes de poder", "Gabinetes", "Disipadores", "Gráficas", "Monitores", "Teclados ", "Mouse", "Almacenamiento", "RAM", "Tarjetas Madres", "Bocinas", "Microfonos", "Sillas", "Ventiladores (Gabinetes)" }));
-        cboxcategoria.addActionListener(this::cboxcategoriaActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -162,8 +170,8 @@ public class VPublicar extends javax.swing.JFrame {
             double precioNum = Double.parseDouble(precio);
             int stockNum = Integer.parseInt(stock);
             
-            String sql = "INSERT INTO productos (nombre, precio, marca, carcateristica, stock) "
-                   + "VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO productos (nombre, precio, marca, carcateristica, stock, id_usuario_vendedor) "
+                   + "VALUES (?, ?, ?, ?, ?, ?)";
 
         java.sql.PreparedStatement ps = this.conexionActiva.prepareStatement(sql);
         ps.setString(1, nombre);
@@ -171,6 +179,7 @@ public class VPublicar extends javax.swing.JFrame {
         ps.setString(3, marca);
         ps.setString(4, categoria);
         ps.setInt(5, stockNum);
+        ps.setInt(6, this.idUsuarioVendedor);
         
 
         int filas = ps.executeUpdate();

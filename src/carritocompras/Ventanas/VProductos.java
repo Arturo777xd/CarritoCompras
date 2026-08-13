@@ -17,6 +17,8 @@ public class VProductos extends javax.swing.JFrame {
      */
     public VProductos() {
         initComponents();
+        TemaAplicacion.aplicarVentana(this);
+        setTitle("Carrito Compras - Productos");
     }
 
     /**

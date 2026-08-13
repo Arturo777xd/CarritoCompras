@@ -22,6 +22,7 @@ public class CarritoCompras {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        carritocompras.Ventanas.TemaAplicacion.instalar();
         Connection objConnection =  BS();
         if (objConnection != null){
             System.out.println("Se conectó");
